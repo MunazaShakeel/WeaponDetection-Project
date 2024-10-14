@@ -1,0 +1,5 @@
+streamlit
+numpy
+opencv-python-headless  # Assuming you use OpenCV for image processing
+tensorflow  # Assuming you use TensorFlow for CNN model
+scikit-learn 
