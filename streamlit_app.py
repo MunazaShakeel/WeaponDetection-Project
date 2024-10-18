@@ -77,3 +77,27 @@ if uploaded_file is not None:
     else:
         st.write("No weapon detected.")
 
+#check the model that is loaded or not
+
+import streamlit as st
+import tensorflow as tf
+import tempfile
+
+# Streamlit app interface
+st.title("Weapon Detection App")
+
+# Upload .h5 model
+uploaded_model = st.file_uploader("Upload your .h5 model", type="h5")
+
+if uploaded_model is not None:
+    # Create a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".h5") as temp_file:
+        # Save the uploaded model to the temporary file
+        temp_file.write(uploaded_model.getbuffer())
+        temp_model_path = temp_file.name
+
+    # Load the model from the temporary file
+    model = tf.keras.models.load_model(temp_model_path)
+    st.success("Model loaded successfully!")
+else:
+    st.error("Please upload a valid .h5 model file.")

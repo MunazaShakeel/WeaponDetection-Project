@@ -5,7 +5,7 @@ import cv2
 from PIL import Image
 
 # Load your trained model
-model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'  # path to where your model is saved
+model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'  # Corrected path to your model
 model = tf.keras.models.load_model(model_path)
 
 def preprocess_image(image, target_size=(60, 60)):
@@ -76,3 +76,15 @@ if uploaded_file is not None:
         st.write("⚠️ A knife was detected!")
     else:
         st.write("No weapon detected.")
+# Streamlit app interface
+st.title("Weapon Detection App")
+
+# Upload .h5 model
+uploaded_model = st.file_uploader("Upload your .h5 model", type="h5")
+
+if uploaded_model is not None:
+    model = tf.keras.models.load_model(uploaded_model)
+    st.success("Model loaded successfully!")
+else:
+    st.error("Please upload a valid .h5 model file.")
+
