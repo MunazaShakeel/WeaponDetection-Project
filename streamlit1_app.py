@@ -76,4 +76,3 @@ if uploaded_file is not None:
         st.write("⚠️ A knife was detected!")
     else:
         st.write("No weapon detected.")
-
