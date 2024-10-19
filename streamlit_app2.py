@@ -40,7 +40,7 @@ def predict_weapon(image):
     predicted_probs = prediction[0]  # Model returns a list, we get the first element
 
     # Set a confidence threshold (try a higher threshold like 0.5 or 0.6)
-    confidence_threshold = 0.6  # Adjust based on validation performance
+    confidence_threshold = 0.2  # Adjust based on validation performance
 
     # Get the index of the class with the highest probability
     predicted_class_idx = np.argmax(predicted_probs)
@@ -76,5 +76,24 @@ if uploaded_file is not None:
         st.write("⚠️ A knife was detected!")
     else:
         st.write("No weapon detected.")
+import streamlit as st
+import tensorflow as tf
+import tempfile
+
+# File uploader for .h5 model file
+uploaded_model = st.file_uploader("Upload your .h5 model", type="h5")
+
+if uploaded_model is not None:
+    # Save the uploaded model file to a temporary location
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(uploaded_model.read())
+        model_path = temp_file.name
+
+    # Now load the model from the saved temporary file
+    model = tf.keras.models.load_model(model_path)
+    st.write("Model loaded successfully!")
+else:
+    st.error("Please upload a valid .h5 model file.")
+
 
 

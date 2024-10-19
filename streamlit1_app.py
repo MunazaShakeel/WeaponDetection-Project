@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow as tf
 import cv2
 from PIL import Image
+from tensorflow.keras.models import load_model
+
 
 # Load your trained model
 model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'  # Corrected path to your model
@@ -78,13 +80,15 @@ if uploaded_file is not None:
         st.write("No weapon detected.")
 # Streamlit app interface
 st.title("Weapon Detection App")
+#check the model is loaded or not
+import os
 
-# Upload .h5 model
-uploaded_model = st.file_uploader("Upload your .h5 model", type="h5")
-
-if uploaded_model is not None:
-    model = tf.keras.models.load_model(uploaded_model)
-    st.success("Model loaded successfully!")
+model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'
+if os.path.exists(model_path):
+    model = tf.keras.models.load_model(model_path)
+    st.write("Model loaded successfully.")
 else:
-    st.error("Please upload a valid .h5 model file.")
+    st.write(f"Model not found at {model_path}. Please check the path.")
+import tensorflow as tf
+st.write(f"TensorFlow version: {tf.__version__}")
 
