@@ -3,46 +3,44 @@ import numpy as np
 import tensorflow as tf
 import cv2
 from PIL import Image
-from tensorflow.keras.models import load_model
+import os
 
+# Path to your model file
+model = 'cnn_model1.h5'
 
-# Load your trained model
-model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'  # Corrected path to your model
-model = tf.keras.models.load_model(model_path)
+# Check if the model exists and load it
+if os.path.exists(model):
+    model = tf.keras.models.load_model(model)
+    # Compile the model with an appropriate loss, optimizer, and metrics
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    st.write("Model loaded and compiled successfully.")
+else:
+    st.write(f"Model not found at {model}. Please check the path.")
 
+# Preprocessing function
 def preprocess_image(image, target_size=(60, 60)):
-    """Preprocesses the uploaded image to the format required by the model."""
-    # Convert the uploaded image to a NumPy array
+    """Preprocess the uploaded image to the format required by the model."""
     img = np.array(image)
-
-    # Resize the image to the target size
     img_resized = cv2.resize(img, target_size)
-
-    # Convert to grayscale if necessary (check if the model expects grayscale)
     img_gray = cv2.cvtColor(img_resized, cv2.COLOR_RGB2GRAY)
-
-    # Normalize pixel values to the 0-1 range
     img_normalized = img_gray / 255.0
-
-    # Reshape for the model input (assuming the model expects grayscale input)
     img_reshaped = img_normalized.reshape((60, 60, 1))
+    return np.array([img_reshaped])  # Add batch dimension
 
-    # Add batch dimension (1, 60, 60, 1)
-    return np.array([img_reshaped])
-
+# Prediction function
 def predict_weapon(image):
     """Predicts if a weapon is present in the image and applies a confidence threshold."""
     processed_image = preprocess_image(image)
     prediction = model.predict(processed_image)
 
-    # Define class labels based on your model's output
+    # Define class labels
     class_labels = ['Guns', 'Knives', 'NoWeapons']
 
     # Get prediction probabilities
-    predicted_probs = prediction[0]  # Model returns a list, we get the first element
+    predicted_probs = prediction[0]  # First element in prediction array
 
-    # Set a confidence threshold (try a higher threshold like 0.5 or 0.6)
-    confidence_threshold = 0.5  # Adjust based on validation performance
+    # Set a confidence threshold
+    confidence_threshold = 0.5
 
     # Get the index of the class with the highest probability
     predicted_class_idx = np.argmax(predicted_probs)
@@ -78,17 +76,6 @@ if uploaded_file is not None:
         st.write("⚠️ A knife was detected!")
     else:
         st.write("No weapon detected.")
-# Streamlit app interface
-st.title("Weapon Detection App")
-#check the model is loaded or not
-import os
 
-model_path = '/workspaces/WeaponDetection-Project/cnn_model1.h5'
-if os.path.exists(model_path):
-    model = tf.keras.models.load_model(model_path)
-    st.write("Model loaded successfully.")
-else:
-    st.write(f"Model not found at {model_path}. Please check the path.")
-import tensorflow as tf
+# Output TensorFlow version
 st.write(f"TensorFlow version: {tf.__version__}")
-

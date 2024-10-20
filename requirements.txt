@@ -5,4 +5,4 @@ tensorflow  # Assuming you use TensorFlow for CNN model
 scikit-learn
 scikit-image
 joblib
-
+pillow
